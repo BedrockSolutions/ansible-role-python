@@ -1,0 +1,18 @@
+---
+
+- block:
+    - validate:
+        schema:
+          type: object
+          properties:
+            command:
+              type: string
+              enum:
+                - pip3
+          required:
+            - command
+        instance: "{{ python }}"
+
+    - include_tasks: '{{ python.command }}.yml'
+  tags:
+    - python
