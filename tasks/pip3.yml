@@ -31,7 +31,7 @@
         name: "{{ os_v.packages }}"
         executable: /usr/local/bin/pip3
         extra_args: --upgrade --user
-      when: os_v.packages | length
+      when: (os_v.packages | length) > 0
 
   tags:
     - os_pip3
