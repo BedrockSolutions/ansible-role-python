@@ -18,7 +18,7 @@
       register: python_validated
 
     - set_fact:
-        os_v: "{{ python_validated.result }}"
+        python_v: "{{ python_validated.result }}"
 
     - name: "Install pip3"
       shell: curl -sS https://bootstrap.pypa.io/get-pip.py | sudo python3
