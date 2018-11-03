@@ -14,11 +14,11 @@
               default: []
           required:
             - packages
-        instance: "{{ os }}"
-      register: os_validated
+        instance: "{{ python }}"
+      register: python_validated
 
     - set_fact:
-        os_v: "{{ os_validated.result }}"
+        os_v: "{{ python_validated.result }}"
 
     - name: "Install pip3"
       shell: curl -sS https://bootstrap.pypa.io/get-pip.py | sudo python3
@@ -28,10 +28,10 @@
 
     - name: "Install pip packages"
       pip:
-        name: "{{ os_v.packages }}"
+        name: "{{ python_v.packages }}"
         executable: /usr/local/bin/pip3
         extra_args: --upgrade --user
-      when: (os_v.packages | length) > 0
+      when: python_v.packages | length
 
   tags:
     - os_pip3
