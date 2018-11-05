@@ -32,7 +32,7 @@
         creates: /usr/local/bin/pip3
         warn: no
 
-    - block
+    - block:
       - name: "Get pip options"
         set_fact:
           python_pip_options:
