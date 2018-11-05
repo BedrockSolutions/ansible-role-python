@@ -12,24 +12,36 @@
               items:
                 type: string
               default: []
-            user:
+            python_version:
+              type: string
+              enum:
+                - 2
+                - 3
+            upgrade:
               type: boolean
               default: no
-            upgrade:
+            user:
               type: boolean
               default: no
           required:
             - packages
+            - python_version
+            - upgrade
+            - user
         instance: "{{ python }}"
       register: python_validated
 
     - set_fact:
         python_v: "{{ python_validated.result }}"
 
-    - name: "Install pip3"
-      shell: curl -sS https://bootstrap.pypa.io/get-pip.py | sudo python3
+    - set_fact:
+        python_python: "{{ python_v.python_version == 2 | ternary('python2', 'python3') }}"
+        python_pip: "{{ python_v.python_version == 2 | ternary('pip2', 'pip3') }}"
+
+    - name: "Install {{ python_pip }}"
+      shell: "curl -sS https://bootstrap.pypa.io/get-pip.py | sudo {{ python_python }}"
       args:
-        creates: /usr/local/bin/pip3
+        creates: "/usr/local/bin/{{ python_pip }}"
         warn: no
 
     - block:
@@ -37,7 +49,7 @@
         set_fact:
           python_pip_options:
             - "{{ python_v.upgrade | ternary('--upgrade', None) }}"
-            - "{{ python_v.user |ternary('--user', None) }}"
+            - "{{ python_v.user | ternary('--user', None) }}"
 
       - debug:
           msg: "{{ python_pip_options | join(' ') }}"
@@ -45,10 +57,10 @@
       - name: "Install pip packages"
         pip:
           name: "{{ python_v.packages }}"
-          executable: /usr/local/bin/pip3
+          executable: "/usr/local/bin/{{ python_pip }}"
           extra_args: "{{ python_pip_options | join(' ') }}"
         become: "{{ not python_v.user }}"
       when: python_v.packages | length
 
   tags:
-    - python_pip3
+    - python_pip

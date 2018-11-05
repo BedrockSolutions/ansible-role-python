@@ -8,7 +8,7 @@
             command:
               type: string
               enum:
-                - pip3
+                - pip
           required:
             - command
         instance: "{{ python }}"
