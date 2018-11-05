@@ -51,4 +51,4 @@
       when: python_v.packages | length
 
   tags:
-    - os_pip3
+    - python_pip3
