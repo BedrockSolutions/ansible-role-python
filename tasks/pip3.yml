@@ -12,6 +12,12 @@
               items:
                 type: string
               default: []
+            user:
+              type: boolean
+              default: no
+            upgrade:
+              type: boolean
+              default: no
           required:
             - packages
         instance: "{{ python }}"
@@ -26,11 +32,21 @@
         creates: /usr/local/bin/pip3
         warn: no
 
-    - name: "Install pip packages"
-      pip:
-        name: "{{ python_v.packages }}"
-        executable: /usr/local/bin/pip3
-        extra_args: --upgrade --user
+    - block
+      - name: "Get pip options"
+        set_fact:
+          python_pip_options:
+            - "{{ python_v.upgrade | ternary('--upgrade', None) }}"
+            - "{{ python_v.user |ternary('--user', None) }}"
+
+      - debug:
+          msg: "{{ python_pip_options | join(' ') }}"
+
+      - name: "Install pip packages"
+        pip:
+          name: "{{ python_v.packages }}"
+          executable: /usr/local/bin/pip3
+          extra_args: "{{ python_pip_options | join(' ') }}"
       when: python_v.packages | length
 
   tags:
