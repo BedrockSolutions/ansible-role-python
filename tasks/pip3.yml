@@ -47,6 +47,7 @@
           name: "{{ python_v.packages }}"
           executable: /usr/local/bin/pip3
           extra_args: "{{ python_pip_options | join(' ') }}"
+        become: "{{ not python_v.user }}"
       when: python_v.packages | length
 
   tags:
