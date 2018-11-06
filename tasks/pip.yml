@@ -13,7 +13,7 @@
                 type: string
               default: []
             python_version:
-              type: string
+              type: integer
               enum:
                 - 2
                 - 3
