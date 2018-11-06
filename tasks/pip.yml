@@ -51,9 +51,6 @@
             - "{{ python_v.upgrade | ternary('--upgrade', None) }}"
             - "{{ python_v.user | ternary('--user', None) }}"
 
-      - debug:
-          msg: "{{ python_pip_options | join(' ') }}"
-
       - name: "Install pip packages"
         pip:
           name: "{{ python_v.packages }}"
