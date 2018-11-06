@@ -35,8 +35,8 @@
         python_v: "{{ python_validated.result }}"
 
     - set_fact:
-        python_python: "{{ python_v.python_version == 2 | ternary('python2', 'python3') }}"
-        python_pip: "{{ python_v.python_version == 2 | ternary('pip2', 'pip3') }}"
+        python_python: "{{ (python_v.python_version == 2) | ternary('python2', 'python3') }}"
+        python_pip: "{{ (python_v.python_version == 2) | ternary('pip2', 'pip3') }}"
 
     - name: "Install {{ python_pip }}"
       shell: "curl -sS https://bootstrap.pypa.io/get-pip.py | sudo {{ python_python }}"
