@@ -12,11 +12,6 @@
               items:
                 type: string
               default: []
-            python_version:
-              type: integer
-              enum:
-                - 2
-                - 3
             upgrade:
               type: boolean
               default: no
@@ -25,7 +20,6 @@
               default: no
           required:
             - packages
-            - python_version
             - upgrade
             - user
         instance: "{{ python }}"
@@ -34,15 +28,16 @@
     - set_fact:
         python_v: "{{ python_validated.result }}"
 
-    - set_fact:
-        python_python: "{{ (python_v.python_version == 2) | ternary('python2', 'python3') }}"
-        python_pip: "{{ (python_v.python_version == 2) | ternary('pip2', 'pip3') }}"
-
-    - name: "Install {{ python_pip }}"
-      shell: "curl -sS https://bootstrap.pypa.io/get-pip.py | sudo {{ python_python }}"
+    - name: "Install pip"
+      shell: "curl -sS https://bootstrap.pypa.io/get-pip.py | sudo {{ item.python }}"
       args:
-        creates: "/usr/local/bin/{{ python_pip }}"
+        creates: "/usr/local/bin/{{ item.pip }}"
         warn: no
+      loop:
+        - python: python2
+          pip: pip2
+        - python: python3
+          pip: pip3
 
     - block:
       - name: "Get pip options"
@@ -54,9 +49,13 @@
       - name: "Install pip packages"
         pip:
           name: "{{ python_v.packages }}"
-          executable: "/usr/local/bin/{{ python_pip }}"
+          executable: "/usr/local/bin/{{ item }}"
           extra_args: "{{ python_pip_options | join(' ') }}"
         become: "{{ not python_v.user }}"
+        loop:
+          - pip2
+          - pip3
+
       when: python_v.packages | length
 
   tags:
