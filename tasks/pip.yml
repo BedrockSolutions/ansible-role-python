@@ -57,7 +57,7 @@
       - name: "Install pip packages"
         pip:
           name: "{{ python_v.packages }}"
-          executable: "/usr/local/bin/{{ item }}"
+          executable: "/usr/bin/{{ item }}"
           extra_args: "{{ python_pip_options | join(' ') }}"
         become: "{{ not python_v.user }}"
         loop:
