@@ -59,7 +59,6 @@
           name: "{{ python_v.packages }}"
           executable: "/usr/bin/{{ item }}"
           extra_args: "{{ python_pip_options | join(' ') }}"
-        become: "{{ not python_v.user }}"
         loop:
           - pip2
           - pip3
